@@ -2006,14 +2006,6 @@ document.addEventListener('DOMContentLoaded', () => {
   byId('currentDeviceNamePreview').textContent = savedName;
 });
 
-// ================= GLOBAL CLICK DEBUG =================
-document.addEventListener('click', function (e) {
-  alert(
-    'CLICKED TAG: ' + e.target.tagName +
-    '\nID: ' + e.target.id +
-    '\nCLASS: ' + e.target.className
-  );
-});
   
 });function setupEventListeners() {
   byId('backToTables').addEventListener('click', goBackToTables);
@@ -2084,10 +2076,18 @@ function createCartModalContent() {
   }, 100);
   return html;
 }
+
+  document.addEventListener('click', function (e) {
+  const btn = e.target.closest('#closeTable');
+  if (!btn) return;
+
+  alert('ΠΑΤΗΘΗΚΕ ΚΛΕΙΣΙΜΟ ΤΡΑΠΕΖΙΟΥ');
+});
 </script>
 </body>
 
 </html>
+
 
 
 
