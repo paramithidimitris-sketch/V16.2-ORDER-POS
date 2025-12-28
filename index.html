@@ -2035,8 +2035,9 @@ function setupEventListeners() {
   byId('quickPrintBtn')?.addEventListener('click', quickPrint);
   byId('printNow')?.addEventListener('click', executeAndPrint);
   byId('clearDraft')?.addEventListener('click', clearDraft);
-  byId('closeTable')?.addEventListener('click', closeTable);
-  byId('transferTable')?.addEventListener('click', openTransferModal);
+
+
+byId('transferTable')?.addEventListener('click', openTransferModal);
 
   byId('orderNote')?.addEventListener('input', function () {
     if (currentTable) {
@@ -2055,6 +2056,13 @@ function setupEventListeners() {
   byId('catalogModalClose')?.addEventListener('click', () => closeModal('catalogModal'));
   byId('productFormClose')?.addEventListener('click', () => closeModal('productFormModal'));
 }
+// =============== GLOBAL EVENT DELEGATION =================
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('#closeTable');
+  if (!btn) return;
+
+  closeTable();
+});
 </script>
 </body>
 </html>
