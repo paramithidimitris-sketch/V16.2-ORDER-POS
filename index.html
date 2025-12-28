@@ -2044,6 +2044,12 @@ function createCartModalContent() {
   }, 100);
   return html;
 }
+  document.addEventListener('click', function (e) {
+  if (e.target && e.target.id === 'closeTable') {
+    closeTable();
+  }
+});
 </script>
 </body>
+
 </html>
