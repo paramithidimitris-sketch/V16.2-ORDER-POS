@@ -1507,9 +1507,17 @@ function clearDraft() {
 }
 function closeTable() {
   if (!currentTable || !confirm("Είστε σίγουρος ότι θέλετε να κλείσετε το τραπέζι;")) return;
+
+  if (window.AndroidApp && AndroidApp.closeTable) {
+    AndroidApp.closeTable(currentTable);
+    return;
+  }
+
   tables[currentTable] = { items: [], total: 0, status: 'free', orderNote: '' };
   byId('orderNote').value = '';
-  saveTables(); renderTablesView(); goBackToTables();
+  saveTables();
+  renderTablesView();
+  goBackToTables();
   showToast('Το τραπέζι έκλεισε', 'success');
 }
 
@@ -2046,4 +2054,5 @@ function createCartModalContent() {
 }
 </script>
 </body>
+
 </html>
