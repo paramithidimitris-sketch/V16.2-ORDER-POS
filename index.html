@@ -1506,7 +1506,31 @@ function clearDraft() {
   showToast('Τα μη εκτυπωμένα προϊόντα διαγράφηκαν', 'info');
 }
 function closeTable() {
-  alert("CLOSE TABLE CLICKED");
+  if (!currentTable) return;
+
+  if (!confirm(`Είστε σίγουρος ότι θέλετε να κλείσετε το Τραπέζι ${currentTable};`)) {
+    return;
+  }
+
+  // reset τραπεζιού
+  tables[currentTable] = {
+    items: [],
+    total: 0,
+    status: 'free',
+    orderNote: ''
+  };
+
+  saveTables();
+
+  // καθάρισμα UI
+  byId('orderNote').value = '';
+  currentTable = null;
+
+  renderTablesView();
+  showEl(byId('tablesView'));
+  hideEl(byId('orderView'));
+
+  showToast('Το τραπέζι έκλεισε επιτυχώς', 'success');
 }
 // =============== PRINTING ===============
 function printViaRawBT(text) {
@@ -2061,8 +2085,4 @@ function createCartModalContent() {
 </body>
 
 </html>
-
-
-
-
 
