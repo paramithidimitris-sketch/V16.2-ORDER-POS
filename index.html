@@ -1506,6 +1506,7 @@ function clearDraft() {
   showToast('Τα μη εκτυπωμένα προϊόντα διαγράφηκαν', 'info');
 }
 function closeTable() {
+  alert("JS closeTable EXECUTED");
   if (!currentTable || !confirm("Είστε σίγουρος ότι θέλετε να κλείσετε το τραπέζι;")) return;
 
   tables[currentTable] = { items: [], total: 0, status: 'free', orderNote: '' };
@@ -2055,4 +2056,5 @@ function createCartModalContent() {
 </body>
 
 </html>
+
 
