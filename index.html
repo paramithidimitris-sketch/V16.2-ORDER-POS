@@ -1962,14 +1962,32 @@ function saveProduct() {
 
 // =============== INITIALIZATION ===============
 document.addEventListener('DOMContentLoaded', () => {
-  loadCatalog(); loadTables(); setupEventListeners(); renderTablesView();
-  setupReprintModal(); 
-  
-  qsa('.btn, .tab, .product, .chip, .table-btn').forEach(el => el.addEventListener('click', function() { addClickEffect(this); }));
-  const savedName = localStorage.getItem('pos_device_name') || 'ORDER_POS';
-  byId('deviceNameInput').value = savedName; byId('currentDeviceNamePreview').textContent = savedName;
-});
+  loadCatalog();
+  loadTables();
+  setupEventListeners();
+  renderTablesView();
+  setupReprintModal();
 
+  // ✳️ CLICK EFFECTS
+  qsa('.btn, .tab, .product, .chip, .table-btn').forEach(el =>
+    el.addEventListener('click', function () {
+      addClickEffect(this);
+    })
+  );
+
+  // ✳️ DEVICE NAME
+  const savedName = localStorage.getItem('pos_device_name') || 'ORDER_POS';
+  byId('deviceNameInput').value = savedName;
+  byId('currentDeviceNamePreview').textContent = savedName;
+
+  // ✅ ΚΛΕΙΣΙΜΟ ΤΡΑΠΕΖΙΟΥ – ΔΕΣΙΜΟ ΚΟΥΜΠΙΟΥ
+  const closeBtn = byId('closeTable');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      closeTable();
+    });
+  }
+});
 function setupEventListeners() {
   byId('backToTables').addEventListener('click', goBackToTables);
   qsa('.tab').forEach(btn => btn.addEventListener('click', () => {
@@ -2043,6 +2061,7 @@ function createCartModalContent() {
 </body>
 
 </html>
+
 
 
 
