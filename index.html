@@ -1988,22 +1988,36 @@ function saveProduct() {
 document.addEventListener('DOMContentLoaded', () => {
   loadCatalog();
   loadTables();
-  setupEventListeners();
   renderTablesView();
   setupReprintModal();
+  setupEventListeners();
 
-  // ✳️ CLICK EFFECTS
+  // CLICK EFFECTS
   qsa('.btn, .tab, .product, .chip, .table-btn').forEach(el =>
     el.addEventListener('click', function () {
       addClickEffect(this);
     })
   );
 
-  // ✳️ DEVICE NAME
+  // DEVICE NAME
   const savedName = localStorage.getItem('pos_device_name') || 'ORDER_POS';
   byId('deviceNameInput').value = savedName;
   byId('currentDeviceNamePreview').textContent = savedName;
 });
+
+// =============== BASIC NAVIGATION ===============
+function goBackToTables() {
+  currentTable = null;
+  showEl(byId('tablesView'));
+  hideEl(byId('orderView'));
+  renderTablesView();
+  showToast('Επιστροφή στα τραπέζια', 'info');
+}
+
+// =============== CART MODAL ===============
+function openCartModal() {
+  showToast('Το καλάθι είναι προσωρινά απενεργοποιημένο', 'info');
+}
 
 // =============== EVENT LISTENERS ===============
 function setupEventListeners() {
@@ -2041,16 +2055,6 @@ function setupEventListeners() {
   byId('catalogModalClose')?.addEventListener('click', () => closeModal('catalogModal'));
   byId('productFormClose')?.addEventListener('click', () => closeModal('productFormModal'));
 }
-
-// =============== GLOBAL DEBUG (ΚΛΕΙΣΙΜΟ ΤΡΑΠΕΖΙΟΥ) ===============
-document.addEventListener('click', function (e) {
-  const btn = e.target.closest('#closeTable');
-  if (!btn) return;
-
-  alert('ΠΑΤΗΘΗΚΕ ΚΛΕΙΣΙΜΟ ΤΡΑΠΕΖΙΟΥ');
-});
 </script>
 </body>
 </html>
-
-
