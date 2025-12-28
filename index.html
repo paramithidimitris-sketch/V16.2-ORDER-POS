@@ -1998,6 +1998,7 @@ document.addEventListener('DOMContentLoaded', () => {
       addClickEffect(this);
     })
   );
+  
 
   // ✳️ DEVICE NAME
   const savedName = localStorage.getItem('pos_device_name') || 'ORDER_POS';
@@ -2005,14 +2006,15 @@ document.addEventListener('DOMContentLoaded', () => {
   byId('currentDeviceNamePreview').textContent = savedName;
 });
 
-// ================= GLOBAL CLICK HANDLERS =================
-
-// ✅ ΚΛΕΙΣΙΜΟ ΤΡΑΠΕΖΙΟΥ (event delegation – ΠΙΑΝΕΙ ΠΑΝΤΑ)
+// ================= GLOBAL CLICK DEBUG =================
 document.addEventListener('click', function (e) {
-  const closeBtn = e.target.closest('#closeTable');
-  if (!closeBtn) return;
-
-  closeTable();
+  alert(
+    'CLICKED TAG: ' + e.target.tagName +
+    '\nID: ' + e.target.id +
+    '\nCLASS: ' + e.target.className
+  );
+});
+  
 });function setupEventListeners() {
   byId('backToTables').addEventListener('click', goBackToTables);
   qsa('.tab').forEach(btn => btn.addEventListener('click', () => {
@@ -2086,5 +2088,6 @@ function createCartModalContent() {
 </body>
 
 </html>
+
 
 
