@@ -1506,32 +1506,13 @@ function clearDraft() {
   showToast('Τα μη εκτυπωμένα προϊόντα διαγράφηκαν', 'info');
 }
 function closeTable() {
-  if (!currentTable) return;
-
-  if (!confirm(`Είστε σίγουρος ότι θέλετε να κλείσετε το Τραπέζι ${currentTable};`)) {
-    return;
-  }
-
-  // reset τραπεζιού
-  tables[currentTable] = {
-    items: [],
-    total: 0,
-    status: 'free',
-    orderNote: ''
-  };
-
-  saveTables();
-
-  // καθάρισμα UI
+  if (!currentTable || !confirm("Είστε σίγουρος ότι θέλετε να κλείσετε το τραπέζι;")) return;
+  tables[currentTable] = { items: [], total: 0, status: 'free', orderNote: '' };
   byId('orderNote').value = '';
-  currentTable = null;
-
-  renderTablesView();
-  showEl(byId('tablesView'));
-  hideEl(byId('orderView'));
-
-  showToast('Το τραπέζι έκλεισε επιτυχώς', 'success');
+  saveTables(); renderTablesView(); goBackToTables();
+  showToast('Το τραπέζι έκλεισε', 'success');
 }
+
 // =============== PRINTING ===============
 function printViaRawBT(text) {
   const base64String = btoa(unescape(encodeURIComponent(text)));
@@ -1983,86 +1964,86 @@ function saveProduct() {
   }
   saveCatalog(); renderAdminCatalog(); closeModal('productFormModal');
 }
-  
+
 // =============== INITIALIZATION ===============
 document.addEventListener('DOMContentLoaded', () => {
-  loadCatalog();
-  loadTables();
-  renderTablesView();
-  setupReprintModal();
-  setupEventListeners();
-
-  // CLICK EFFECTS
-  qsa('.btn, .tab, .product, .chip, .table-btn').forEach(el =>
-    el.addEventListener('click', function () {
-      addClickEffect(this);
-    })
-  );
-
-  // DEVICE NAME
+  loadCatalog(); loadTables(); setupEventListeners(); renderTablesView();
+  setupReprintModal(); 
+  
+  qsa('.btn, .tab, .product, .chip, .table-btn').forEach(el => el.addEventListener('click', function() { addClickEffect(this); }));
   const savedName = localStorage.getItem('pos_device_name') || 'ORDER_POS';
-  byId('deviceNameInput').value = savedName;
-  byId('currentDeviceNamePreview').textContent = savedName;
+  byId('deviceNameInput').value = savedName; byId('currentDeviceNamePreview').textContent = savedName;
 });
 
-// =============== BASIC NAVIGATION ===============
-function goBackToTables() {
-  currentTable = null;
-  showEl(byId('tablesView'));
-  hideEl(byId('orderView'));
-  renderTablesView();
-  showToast('Επιστροφή στα τραπέζια', 'info');
-}
-
-// =============== CART MODAL ===============
-function openCartModal() {
-  showToast('Το καλάθι είναι προσωρινά απενεργοποιημένο', 'info');
-}
-
-// =============== EVENT LISTENERS ===============
 function setupEventListeners() {
-  byId('backToTables')?.addEventListener('click', goBackToTables);
-
-  qsa('.tab').forEach(btn =>
-    btn.addEventListener('click', () => {
-      qsa('.tab').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      switchTab(btn.dataset.tab);
-    })
-  );
-
-  byId('openCartBtn')?.addEventListener('click', openCartModal);
-  byId('quickPrintBtn')?.addEventListener('click', quickPrint);
-  byId('printNow')?.addEventListener('click', executeAndPrint);
-  byId('clearDraft')?.addEventListener('click', clearDraft);
-
-
-byId('transferTable')?.addEventListener('click', openTransferModal);
-
-  byId('orderNote')?.addEventListener('input', function () {
-    if (currentTable) {
-      tables[currentTable].orderNote = this.value;
-      saveTables();
-    }
+  byId('backToTables').addEventListener('click', goBackToTables);
+  qsa('.tab').forEach(btn => btn.addEventListener('click', () => {
+    qsa('.tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    switchTab(btn.dataset.tab);
+  }));
+  byId('openCartBtn').addEventListener('click', openCartModal);
+  byId('quickPrintBtn').addEventListener('click', quickPrint);
+  byId('printNow').addEventListener('click', executeAndPrint);
+  byId('clearDraft').addEventListener('click', clearDraft);
+  byId('closeTable').addEventListener('click', closeTable);
+  byId('transferTable').addEventListener('click', openTransferModal);
+  byId('orderNote').addEventListener('input', function() {
+    if (currentTable) { tables[currentTable].orderNote = this.value; saveTables(); }
   });
-
-  setupPinSystem();
-  setupTakeawayModal();
-  setupTransferModal();
-  setupCatalogManagement();
-
-  byId('closeModifiers')?.addEventListener('click', () => closeModal('modifiersModal'));
-  byId('closeCart')?.addEventListener('click', () => closeModal('cartModal'));
-  byId('catalogModalClose')?.addEventListener('click', () => closeModal('catalogModal'));
-  byId('productFormClose')?.addEventListener('click', () => closeModal('productFormModal'));
+  setupPinSystem(); setupTakeawayModal(); setupTransferModal(); setupCatalogManagement();
+  byId('closeModifiers').addEventListener('click', () => closeModal('modifiersModal'));
+  byId('closeCart').addEventListener('click', () => closeModal('cartModal'));
+  byId('catalogModalClose').addEventListener('click', () => closeModal('catalogModal'));
+  byId('productFormClose').addEventListener('click', () => closeModal('productFormModal'));
 }
-// =============== GLOBAL EVENT DELEGATION =================
-document.addEventListener('click', function (e) {
-  const btn = e.target.closest('#closeTable');
-  if (!btn) return;
 
-  closeTable();
-});
+function goBackToTables() {
+  showEl(byId('tablesView')); hideEl(byId('orderView')); currentTable = null;
+  renderTablesView(); showToast('Επιστροφή στα τραπέζια', 'info');
+}
+
+function openCartModal() {
+  const modalContent = byId('cartModalContent');
+  modalContent.innerHTML = createCartModalContent();
+  openModal('cartModal');
+}
+
+function createCartModalContent() {
+  if (!currentTable) return '<div class="empty-cart">Δεν έχετε επιλέξει τραπέζι</div>';
+  const t = tables[currentTable];
+  let html = `<div style="padding: 10px;"><h4 style="margin-top: 0;">Τραπέζι ${currentTable}</h4>`;
+  if (t.items.length === 0) html += '<div class="empty-cart">Το καλάθι είναι άδειο</div>';
+  else {
+    t.items.forEach((it, i) => {
+      const mods = Object.values(it.mods || {}).join(' • ');
+      const lineTotal = it.isFree ? 'FREE' : euro(it.lineTotal);
+      const printedClass = it.isPrinted ? 'printed' : '';
+      html += `<div class="cart-item ${printedClass}" style="margin-bottom: 10px; padding: 10px; background: var(--bg-muted); border-radius: 8px;">
+        <div><strong>${it.qty} x ${it.name}</strong>${mods ? `<div class="meta">${mods}</div>` : ''}</div>
+        <div style="font-weight: bold; color: ${it.isFree ? 'var(--success)' : ''};">${lineTotal}</div>
+        <div style="display: flex; gap: 5px; margin-top: 5px;">
+          <button class="btn remove-small" data-index="${i}" style="padding: 3px 6px; font-size: 11px; background: transparent; color: var(--danger); border: 1px solid var(--danger);">✕</button>
+          ${!it.isPrinted ? `<button class="btn edit-item-small" data-index="${i}" style="padding: 3px 6px; font-size: 11px; background: transparent; color: var(--warning); border: 1px solid var(--warning);">✎</button>` : ''}
+        </div></div>`;
+    });
+    html += `<div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--accent-yellow);">
+      <div style="display: flex; justify-content: space-between; font-size: 18px;"><strong>Σύνολο:</strong><strong>${euro(t.total)}</strong></div></div>
+      <div style="margin-top: 20px; display: flex; gap: 10px;">
+        <button class="btn" id="modalCloseCart" style="flex: 1;">Κλείσιμο</button>
+        <button class="btn success" id="modalPrintFromCart" style="flex: 2;">Εκτύπωση</button>
+      </div>`;
+  }
+  html += '</div>';
+  setTimeout(() => {
+    const closeBtn = byId('modalCloseCart'); const printBtn = byId('modalPrintFromCart');
+    if (closeBtn) closeBtn.addEventListener('click', () => closeModal('cartModal'));
+    if (printBtn) printBtn.addEventListener('click', () => { executeAndPrint(); closeModal('cartModal'); });
+    qsa('.remove-small').forEach(btn => { btn.addEventListener('click', (e) => { removeCartItem(parseInt(e.target.dataset.index)); openCartModal(); }); });
+    qsa('.edit-item-small').forEach(btn => { btn.addEventListener('click', (e) => { closeModal('cartModal'); editCartItem(parseInt(e.target.dataset.index)); }); });
+  }, 100);
+  return html;
+}
 </script>
 </body>
 </html>
