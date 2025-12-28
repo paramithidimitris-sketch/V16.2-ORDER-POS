@@ -1992,7 +1992,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderTablesView();
   setupReprintModal();
 
-  // ✳️ CLICK EFFECTS
+  // ✳️ CLICK EFFECTS (οπτικό feedback)
   qsa('.btn, .tab, .product, .chip, .table-btn').forEach(el =>
     el.addEventListener('click', function () {
       addClickEffect(this);
@@ -2003,16 +2003,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedName = localStorage.getItem('pos_device_name') || 'ORDER_POS';
   byId('deviceNameInput').value = savedName;
   byId('currentDeviceNamePreview').textContent = savedName;
-
-  // ✅ ΚΛΕΙΣΙΜΟ ΤΡΑΠΕΖΙΟΥ – ΔΕΣΙΜΟ ΚΟΥΜΠΙΟΥ
-  const closeBtn = byId('closeTable');
-  if (closeBtn) {
-    closeBtn.addEventListener('click', () => {
-      closeTable();
-    });
-  }
 });
-function setupEventListeners() {
+
+// ================= GLOBAL CLICK HANDLERS =================
+
+// ✅ ΚΛΕΙΣΙΜΟ ΤΡΑΠΕΖΙΟΥ (event delegation – ΠΙΑΝΕΙ ΠΑΝΤΑ)
+document.addEventListener('click', function (e) {
+  const closeBtn = e.target.closest('#closeTable');
+  if (!closeBtn) return;
+
+  closeTable();
+});function setupEventListeners() {
   byId('backToTables').addEventListener('click', goBackToTables);
   qsa('.tab').forEach(btn => btn.addEventListener('click', () => {
     qsa('.tab').forEach(b => b.classList.remove('active'));
@@ -2085,4 +2086,5 @@ function createCartModalContent() {
 </body>
 
 </html>
+
 
