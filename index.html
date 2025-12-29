@@ -1842,18 +1842,30 @@ function printDiscountReceipt(amount) {
 
 // =============== CATALOG MANAGEMENT ===============
 function setupCatalogManagement() {
+function setupCatalogManagement() {
   byId('addProductBtn').addEventListener('click', () => showProductForm());
+
   byId('resetCatalogBtn').addEventListener('click', () => {
     if (confirm("Είστε σίγουρος ότι θέλετε να ΕΠΑΝΑΦΕΡΕΤΕ τον κατάλογο στις προεπιλεγμένες τιμές;")) {
-      catalog = JSON.parse(JSON.stringify(defaultCatalog)); saveCatalog(); renderAdminCatalog();
+      catalog = JSON.parse(JSON.stringify(defaultCatalog));
+      saveCatalog();
+      renderAdminCatalog();
       showToast('Ο κατάλογος επαναφέρθηκε στις αρχικές τιμές.', 'success');
     }
   });
+
   byId('saveProductBtn').addEventListener('click', saveProduct);
   byId('clearCatalogBtn').addEventListener('click', clearCatalog);
   byId('exportCatalogBtn').addEventListener('click', exportCatalog);
-  byId('importCatalogBtn').addEventListener('click', () => byId('catalogFileInput').click());
+
+  // ✅ IMPORT: άνοιγμα file picker
+  byId('importCatalogBtn').addEventListener('click', () => {
+    byId('catalogFileInput').click();
+  });
+
+  // ✅ IMPORT: ανάγνωση αρχείου
   byId('catalogFileInput').addEventListener('change', handleCatalogFileImport);
+
   byId('saveDeviceNameBtn').addEventListener('click', saveDeviceName);
 }
 function saveDeviceName() {
@@ -2085,6 +2097,7 @@ document.addEventListener('click', function (e) {
 </body>
 
 </html>
+
 
 
 
