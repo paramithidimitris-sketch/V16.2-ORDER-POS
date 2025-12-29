@@ -1514,9 +1514,13 @@ function closeTable() {
 
 // =============== PRINTING ===============
 function printViaRawBT(text) {
-  const base64String = btoa(unescape(encodeURIComponent(text)));
-  const url = `rawbt:base64,${base64String}`;
-  window.location.href = url;
+  try {
+    const base64String = btoa(unescape(encodeURIComponent(text)));
+    const url = `rawbt:base64,${base64String}`;
+    window.location.href = url;
+  } catch (e) {
+    alert('Σφάλμα εκτύπωσης μέσω RawBT');
+  }
 }
 function executeAndPrint() {
   if (!currentTable) return;
@@ -2073,6 +2077,7 @@ document.addEventListener('click', function (e) {
 </body>
 
 </html>
+
 
 
 
