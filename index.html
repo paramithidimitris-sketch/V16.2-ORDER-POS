@@ -1767,17 +1767,33 @@ function setupTransferModal() {
 // =============== PIN SYSTEM ===============
 function setupPinSystem() {
   const PIN_CODE = '2691', pinInput = byId('pinInput'), pinModal = byId('pinModal');
-  let pinAction = null;
+let pinAction = '';
   byId('pinCancel').addEventListener('click', () => { pinModal.classList.remove('show'); pinAction = null; });
   pinInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') byId('pinOk').click(); });
   byId('pinOk').addEventListener('click', () => {
-    if (pinInput.value === PIN_CODE) {
-      const currentAction = pinAction; pinModal.classList.remove('show'); pinInput.value = ''; pinAction = null;
-      if (currentAction === 'applyTotalDiscount') applyTotalDiscount();
-      else if (currentAction === 'endShift') endShift();
-      else if (currentAction === 'openAdmin') openAdminPanel();
-    } else { alert('Λάθος PIN. Προσπαθήστε ξανά.'); pinInput.value = ''; pinInput.focus(); }
-  });
+  if (pinInput.value !== PIN_CODE) {
+    alert('Λάθος PIN. Προσπαθήστε ξανά.');
+    pinInput.value = '';
+    pinInput.focus();
+    return;
+  }
+
+  pinModal.classList.remove('show');
+  pinInput.value = '';
+
+  const action = pinAction;
+  pinAction = '';
+
+  if (action === 'applyTotalDiscount') {
+    applyTotalDiscount();
+  } 
+  else if (action === 'endShift') {
+    endShift();
+  } 
+  else if (action === 'openAdmin') {
+    openAdminPanel();
+  }
+});
   byId('btnAdmin').addEventListener('click', () => { pinInput.value = ''; pinAction = 'openAdmin'; byId('pinModalTitle').textContent = 'Εισαγωγή PIN για Διαχείριση'; pinModal.classList.add('show'); pinInput.focus(); });
   byId('btnDiscount').addEventListener('click', () => { pinInput.value = ''; pinAction = 'applyTotalDiscount'; byId('pinModalTitle').textContent = 'Εισαγωγή PIN για Αφαίρεση Ποσού'; pinModal.classList.add('show'); pinInput.focus(); });
   byId('btnEndShift').addEventListener('click', () => { pinInput.value = ''; pinAction = 'endShift'; byId('pinModalTitle').textContent = 'Εισαγωγή PIN για Τέλος Βάρδιας'; pinModal.classList.add('show'); pinInput.focus(); });
@@ -2057,5 +2073,6 @@ document.addEventListener('click', function (e) {
 </body>
 
 </html>
+
 
 
