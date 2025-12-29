@@ -1866,7 +1866,7 @@ function setupCatalogManagement() {
   byId('catalogFileInput').addEventListener('change', handleCatalogFileImport);
 
   byId('saveDeviceNameBtn').addEventListener('click', saveDeviceName);
-}
+  }
 function saveDeviceName() {
   const newName = byId('deviceNameInput').value.trim();
   if (!newName) { showToast('Παρακαλώ εισάγετε όνομα συσκευής', 'warn'); return; }
@@ -2096,6 +2096,7 @@ document.addEventListener('click', function (e) {
 </body>
 
 </html>
+
 
 
 
