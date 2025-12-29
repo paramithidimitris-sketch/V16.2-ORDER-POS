@@ -784,7 +784,6 @@ function renderCart() {
         <button class="btn remove" data-index="${i}">✕</button>
         ${!it.isPrinted ? `<button class="btn edit-item" data-index="${i}">✎</button>` : ''}
       </div>`;
-    li.querySelector('.remove').addEventListener('click', (e) => { e.stopPropagation(); removeCartItem(i); });
     const editBtn = li.querySelector('.edit-item');
     if (editBtn) editBtn.addEventListener('click', (e) => { e.stopPropagation(); editCartItem(i); });
     ul.appendChild(li);
@@ -2044,8 +2043,19 @@ function createCartModalContent() {
   }, 100);
   return html;
 }
+  // =============== CART REMOVE (EVENT DELEGATION) ===============
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('.btn.remove');
+  if (!btn) return;
+
+  const index = parseInt(btn.dataset.index, 10);
+  if (isNaN(index)) return;
+
+  removeCartItem(index);
+});
 </script>
 </body>
 
 </html>
+
 
