@@ -1870,18 +1870,26 @@ function clearCatalog() {
   showToast('Ο κατάλογος καθαρίστηκε πλήρως.', 'success', 4000);
 }
 function exportCatalog() {
-  const catalogData = { coffee: catalog.coffee || [], soft: catalog.soft || [], juices: catalog.juices || [], drinks: catalog.drinks || [], food: catalog.food || [] };
+  const catalogData = {
+    coffee: catalog.coffee || [],
+    soft: catalog.soft || [],
+    juices: catalog.juices || [],
+    drinks: catalog.drinks || [],
+    food: catalog.food || []
+  };
+
   const jsonString = JSON.stringify(catalogData, null, 2);
-  const blob = new Blob([jsonString], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `pos_catalog_${new Date().toISOString().slice(0, 10)}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast('Ο κατάλογος εξήχθη επιτυχώς!', 'success');
+  const base64 = btoa(unescape(encodeURIComponent(jsonString)));
+
+  const filename = `pos_catalog_${new Date().toISOString().slice(0,10)}.json`;
+
+  // 🔥 στέλνουμε το αρχείο στο Android
+  if (window.AndroidBridge && AndroidBridge.saveFile) {
+    AndroidBridge.saveFile(filename, base64);
+    showToast('Ο κατάλογος αποθηκεύτηκε στα Downloads', 'success');
+  } else {
+    showToast('Αποτυχία εξαγωγής (AndroidBridge)', 'danger');
+  }
 }
 function handleCatalogFileImport(event) {
   const file = event.target.files[0];
@@ -2077,6 +2085,7 @@ document.addEventListener('click', function (e) {
 </body>
 
 </html>
+
 
 
 
